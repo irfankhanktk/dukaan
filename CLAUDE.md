@@ -107,7 +107,7 @@ super_admin), NOT by logging in as the owner. All writes go to `audit_log` with 
 ## Data model (Supabase / Postgres)
 - `profiles`: id (= auth.users.id), full_name, phone, platform_role (super_admin | support | null), created_at
 - `shops`: id, owner_id (auth.users), slug (unique), name, city, area, whatsapp_number, logo_url, cover_color,
-  business_type (restaurant | bakery | home_kitchen | grocery | pharmacy | clothing | other), delivery_fee,
+  business_type (restaurant | bakery | home_kitchen | grocery | pharmacy | stationery | clothing | other), delivery_fee,
   delivery_areas (jsonb [{name, fee}], empty = flat delivery_fee), min_order,
   pickup_enabled, is_open, opening_hours (jsonb {prep_time, days: {mon: {open, close, closed}, …}}),
   status (setup | trial | active | payment_due | suspended), plan (e.g. 'standard'), monthly_fee, paid_until,

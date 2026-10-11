@@ -12,6 +12,7 @@ import {
   Languages,
   Link2,
   MessageCircle,
+  NotebookPen,
   Pill,
   ShoppingBasket,
   Smartphone,
@@ -84,6 +85,7 @@ const WHO_ICONS: Partial<Record<BusinessType, LucideIcon>> = {
   bakery: Cake,
   grocery: ShoppingBasket,
   pharmacy: Pill,
+  stationery: NotebookPen,
 };
 const STEP_ICONS: LucideIcon[] = [Store, Link2, MessageCircle];
 const FEATURE_ICONS: LucideIcon[] = [BellRing, Languages, Banknote, Smartphone, PencilLine, TrendingUp];
@@ -225,7 +227,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
         <section aria-labelledby="who-title" className="bg-surface-card py-16 md:py-20">
           <div className="mx-auto max-w-6xl px-4">
             <SectionHeading id="who-title" title={t.who.title} subtitle={t.who.subtitle} />
-            <ul className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-4">
+            <ul className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-6">
               {t.who.items.map((item) => {
                 const Icon = WHO_ICONS[item.key] ?? Store;
                 return (

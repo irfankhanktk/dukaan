@@ -31,6 +31,7 @@ export const FORM_BUSINESS_TYPES = [
   "bakery",
   "grocery",
   "pharmacy",
+  "stationery",
   "other",
 ] as const satisfies readonly BusinessType[];
 
@@ -41,6 +42,7 @@ export const BUSINESS_TYPE_LABELS: Record<Lang, Record<BusinessType, string>> = 
     bakery: "Bakery & sweets",
     grocery: "Kiryana / grocery store",
     pharmacy: "Pharmacy",
+    stationery: "Stationery / book shop",
     clothing: "Clothing",
     other: "Other",
   },
@@ -50,6 +52,7 @@ export const BUSINESS_TYPE_LABELS: Record<Lang, Record<BusinessType, string>> = 
     bakery: "بیکری اور مٹھائی",
     grocery: "کریانہ اسٹور",
     pharmacy: "فارمیسی",
+    stationery: "اسٹیشنری / بک شاپ",
     clothing: "کپڑے",
     other: "دیگر",
   },
@@ -104,6 +107,7 @@ const en = {
       { key: "bakery", body: "Cakes by pound, a message on the cake, sweets by kg." },
       { key: "grocery", body: "Everyday items by kg, dozen or piece." },
       { key: "pharmacy", body: "Medicines and essentials with home delivery." },
+      { key: "stationery", body: "Registers, copies, pens and school supplies." },
     ] as { key: BusinessType; body: string }[],
   },
   demo: {
@@ -299,6 +303,7 @@ const ur: HomeStrings = {
       { key: "bakery", body: "پاؤنڈ کے حساب سے کیک، کیک پر پیغام، کلو کے حساب سے مٹھائی۔" },
       { key: "grocery", body: "روزمرہ کی چیزیں کلو، درجن یا عدد کے حساب سے۔" },
       { key: "pharmacy", body: "ادویات اور ضروری اشیاء گھر تک۔" },
+      { key: "stationery", body: "رجسٹر، کاپیاں، قلم اور اسکول کا سامان۔" },
     ],
   },
   demo: {

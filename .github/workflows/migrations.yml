@@ -1,5 +1,5 @@
 # Applies new SQL files in supabase/migrations/ to the production Supabase project
-# when they land on master. Supabase remembers which migrations ran, so each runs once.
+# when they land on main. Supabase remembers which migrations ran, so each runs once.
 #
 # Repository secrets needed (GitHub → Settings → Secrets and variables → Actions):
 #   SUPABASE_ACCESS_TOKEN  – https://supabase.com/dashboard/account/tokens
@@ -9,7 +9,7 @@ name: Database migrations
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - "supabase/migrations/**"
   workflow_dispatch:

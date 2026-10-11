@@ -104,7 +104,7 @@ export function ImportShopsForm() {
         description={
           <>
             Columns: <code className="rounded bg-surface-bg px-1.5 py-0.5 text-xs">{SHOPS_CSV_HEADER}</code>. Slug is
-            optional (made from the name). Business type: restaurant, bakery, home_kitchen, grocery, pharmacy,
+            optional (made from the name). Business type: restaurant, bakery, home_kitchen, grocery, pharmacy, stationery,
             clothing or other.
           </>
         }

@@ -70,6 +70,13 @@ const TEMPLATES: Record<BusinessType, Record<TemplateKey, GroupTemplate>> = {
     extras: extras([["Home delivery bag", 20]], 1),
     text: text("Prescription note"),
   },
+  stationery: {
+    size: single("Size", [["A5", 0], ["A4", 60]]),
+    weight: single("Pages", [["100 pages", 0], ["200 pages", 100], ["300 pages", 180]]),
+    flavour: single("Colour", [["Blue", 0], ["Black", 0], ["Red", 0]]),
+    extras: extras([["Plastic cover", 30], ["Name label", 20], ["Gift wrap", 50]]),
+    text: text("Name to write on cover"),
+  },
   clothing: {
     size: single("Size", [["S", 0], ["M", 0], ["L", 0], ["XL", 200]]),
     weight: single("Fabric", [["Lawn", 0], ["Cotton", 300]]),

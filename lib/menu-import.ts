@@ -58,6 +58,7 @@ export const BUSINESS_TYPE_LABELS: Record<BusinessType, string> = {
   home_kitchen: "Home kitchen",
   grocery: "Grocery / kiryana",
   pharmacy: "Pharmacy",
+  stationery: "Stationery",
   clothing: "Clothing",
   other: "Other",
 };
