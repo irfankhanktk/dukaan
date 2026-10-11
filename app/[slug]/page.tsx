@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { MenuView } from "@/components/shop/menu-view";
 import { getMenu, getShopBySlug, getShopPublicStatus } from "./data";
 import { ShopUnavailable } from "@/components/shop/shop-unavailable";
+import { jsonLd, shopBreadcrumbJsonLd, shopDescription, shopJsonLd, shopTitle } from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -10,12 +11,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const shop = await getShopBySlug(slug);
   if (!shop) return { title: "Shop not found", robots: { index: false } };
-  const title = `${shop.name} — Order online`;
-  const description = `Order from ${shop.name}${shop.area ? `, ${shop.area}` : ""}. Cash on delivery, order sent on WhatsApp.`;
+  const { products } = await getMenu(shop.id);
+  const title = shopTitle(shop);
+  const description = shopDescription(shop, products);
+  const url = `/${shop.slug}`;
   return {
-    title,
+    title: { absolute: title },
     description,
-    openGraph: { title, description, type: "website" },
+    alternates: { canonical: url },
+    openGraph: { title, description, url, type: "website", siteName: "Dukaan", locale: "en_PK" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
@@ -28,5 +33,15 @@ export default async function ShopPage({ params }: Props) {
     notFound();
   }
   const { categories, products } = await getMenu(shop.id);
-  return <MenuView shop={shop} categories={categories} products={products} />;
+  const description = shopDescription(shop, products);
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(shopJsonLd(shop, categories, products, description)) }}
+      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(shopBreadcrumbJsonLd(shop)) }} />
+      <MenuView shop={shop} categories={categories} products={products} />
+    </>
+  );
 }

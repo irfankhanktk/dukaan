@@ -159,6 +159,7 @@ export function OptionsSheet({
           src={product.photo_url}
           alt={product.name}
           className="h-52 w-full rounded-none md:h-60"
+          sizes="(min-width: 768px) 560px, 100vw"
         />
       ) : null}
       <div className="px-4 pb-4 pt-4 md:px-6">

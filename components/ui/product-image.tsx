@@ -1,15 +1,28 @@
+import Image from "next/image";
 import { ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const STORAGE_PREFIX = `${process.env.NEXT_PUBLIC_SUPABASE_URL ?? ""}/storage/v1/object/public/`;
+
+/** Only Supabase Storage images go through the Next.js optimizer (see images.remotePatterns). */
+function optimizable(src: string) {
+  return !!process.env.NEXT_PUBLIC_SUPABASE_URL && src.startsWith(STORAGE_PREFIX);
+}
 
 /** Product photo, or the warm placeholder tile from the design when there is none. */
 export function ProductImage({
   src,
   alt,
   className,
+  sizes = "96px",
+  priority = false,
 }: {
   src: string | null | undefined;
   alt: string;
   className?: string;
+  /** Rendered width hint for responsive srcset, e.g. "(min-width: 768px) 512px, 100vw". */
+  sizes?: string;
+  priority?: boolean;
 }) {
   if (!src) {
     return (
@@ -24,9 +37,19 @@ export function ProductImage({
       </div>
     );
   }
+  // Sized wrapper (callers pass h-/w- classes) + fill image: resized, WebP/AVIF, no layout shift.
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- Supabase public URLs; avoids remotePatterns config
-    <img src={src} alt={alt} loading="lazy" className={cn("rounded-xl object-cover", className)} />
+    <div className={cn("relative overflow-hidden rounded-xl", className)}>
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        priority={priority}
+        unoptimized={!optimizable(src)}
+        className="object-cover"
+      />
+    </div>
   );
 }
 
@@ -35,15 +58,26 @@ export function ShopAvatar({
   name,
   logoUrl,
   className,
+  priority = false,
 }: {
   name: string;
   logoUrl?: string | null;
   className?: string;
+  priority?: boolean;
 }) {
   if (logoUrl) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={logoUrl} alt={name} className={cn("h-12 w-12 rounded-xl object-cover", className)} />
+      <div className={cn("relative h-12 w-12 shrink-0 overflow-hidden rounded-xl", className)}>
+        <Image
+          src={logoUrl}
+          alt={name}
+          fill
+          sizes="80px"
+          priority={priority}
+          unoptimized={!optimizable(logoUrl)}
+          className="object-cover"
+        />
+      </div>
     );
   }
   const initials = name

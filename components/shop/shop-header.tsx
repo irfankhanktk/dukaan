@@ -81,6 +81,7 @@ export function ShopHeader({ shop }: { shop: PublicShop }) {
             name={shop.name}
             logoUrl={shop.logo_url}
             className="h-16 w-16 rounded-2xl text-xl ring-4 ring-surface-bg md:h-20 md:w-20 md:text-2xl"
+            priority
           />
         </div>
         <h1 className="mt-2 text-[22px] font-extrabold leading-tight md:text-[28px]" dir="auto">

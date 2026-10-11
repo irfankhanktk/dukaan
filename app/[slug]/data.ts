@@ -59,9 +59,10 @@ export const getShopPublicStatus = cache(async (slug: string): Promise<ShopStatu
 
 const bySort = <T extends { sort_order: number }>(a: T, b: T) => a.sort_order - b.sort_order;
 
-export async function getMenu(
+/** Menu for a shop (deduplicated per request between generateMetadata and the page). */
+export const getMenu = cache(async (
   shopId: string,
-): Promise<{ categories: Category[]; products: ProductWithOptions[] }> {
+): Promise<{ categories: Category[]; products: ProductWithOptions[] }> => {
   const supabase = await createClient();
   const [cats, prods] = await Promise.all([
     supabase
@@ -96,7 +97,7 @@ export async function getMenu(
     .sort(bySort);
 
   return { categories, products };
-}
+});
 
 export type PublicOrderItem = {
   product_name: string;

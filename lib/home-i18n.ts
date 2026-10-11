@@ -62,7 +62,7 @@ const en = {
   meta: {
     title: "Dukaan — Take orders on WhatsApp with your own shop link",
     description:
-      "Dukaan gives Pakistani restaurants, home kitchens, bakeries, kiryana stores and pharmacies their own online menu. Customers order from a link and the order arrives on your WhatsApp. Cash on delivery, English and Urdu.",
+      "Your own online menu for Pakistani restaurants, bakeries, home kitchens, kiryana stores and pharmacies. Customers order from a link, orders arrive on WhatsApp.",
   },
   nav: {
     howItWorks: "How it works",
@@ -258,7 +258,7 @@ const ur: HomeStrings = {
   meta: {
     title: "دکان — اپنی دکان کے لنک سے واٹس ایپ پر آرڈر لیں",
     description:
-      "دکان پاکستانی ریسٹورنٹس، ہوم کچن، بیکریوں، کریانہ اسٹورز اور فارمیسیوں کو اپنا آن لائن مینو دیتا ہے۔ گاہک لنک سے آرڈر کرتے ہیں اور آرڈر آپ کے واٹس ایپ پر آ جاتا ہے۔",
+      "دکان پاکستانی ریسٹورنٹس، بیکریوں، ہوم کچن اور کریانہ اسٹورز کو اپنا آن لائن مینو دیتا ہے۔ گاہک لنک سے آرڈر کرتے ہیں اور آرڈر آپ کے واٹس ایپ پر آتا ہے۔",
   },
   nav: {
     howItWorks: "طریقہ کار",
@@ -456,10 +456,14 @@ export function homeStrings(lang: Lang): HomeStrings {
 /** English labels for preferred_time values (admin panel). */
 export const PREFERRED_TIME_LABELS: Record<PreferredTime, string> = en.register.times;
 
-/** Public base URL (no trailing slash): NEXT_PUBLIC_SITE_URL, else the Vercel URL, else localhost. */
+/** The production domain; canonical URLs, sitemap and OG links always point here. */
+export const PRODUCTION_URL = "https://dukaan-online.vercel.app";
+
+/** Public base URL (no trailing slash): NEXT_PUBLIC_SITE_URL, else the production domain on Vercel, else localhost. */
 export function siteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
   if (explicit) return explicit;
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
-  return vercel ? `https://${vercel}` : "http://localhost:3000";
+  // On Vercel (production AND previews) use the production domain, never the per-deployment URL,
+  // so previews can't leak into canonicals or the sitemap.
+  return process.env.VERCEL ? PRODUCTION_URL : "http://localhost:3000";
 }

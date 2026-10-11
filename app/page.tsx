@@ -33,7 +33,9 @@ import {
   PLAN_PRICE,
   PLATFORM_WHATSAPP_TEXT,
   homeStrings,
+  siteUrl,
 } from "@/lib/home-i18n";
+import { jsonLd } from "@/lib/seo";
 import { formatRs } from "@/lib/format";
 import { waLink } from "@/lib/whatsapp";
 import type { BusinessType } from "@/lib/types";
@@ -109,6 +111,50 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
     })),
   };
 
+  const base = siteUrl();
+  const siteJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${base}/#org`,
+        name: "Dukaan",
+        url: `${base}/`,
+        logo: `${base}/icons/icon-512.png`,
+        areaServed: { "@type": "Country", name: "Pakistan" },
+        ...(platformWa
+          ? {
+              contactPoint: {
+                "@type": "ContactPoint",
+                telephone: `+${platformWa}`,
+                contactType: "sales",
+                availableLanguage: ["en", "ur"],
+              },
+            }
+          : {}),
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${base}/#website`,
+        name: "Dukaan",
+        url: `${base}/`,
+        inLanguage: ["en", "ur"],
+        publisher: { "@id": `${base}/#org` },
+      },
+      {
+        "@type": "Service",
+        name: t.meta.title,
+        description: t.meta.description,
+        serviceType: "Online ordering via WhatsApp",
+        provider: { "@id": `${base}/#org` },
+        areaServed: { "@type": "Country", name: "Pakistan" },
+        ...(PLAN_PRICE !== null
+          ? { offers: { "@type": "Offer", price: PLAN_PRICE, priceCurrency: "PKR", description: "Monthly subscription" } }
+          : {}),
+      },
+    ],
+  };
+
   return (
     <div
       dir={dir}
@@ -122,8 +168,9 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
     >
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c") }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(faqJsonLd) }}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(siteJsonLd) }} />
 
       {/* ------------------------------------------------------------------ Hero */}
       <header className="bg-brand-primary text-text-inverse">
