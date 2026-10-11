@@ -1,109 +1,107 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# Dukaan
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+WhatsApp ordering for small Pakistani shops. Customers order from a shop link (`/ali-bakers`),
+the order is saved, and WhatsApp opens with the order message prefilled. Shopkeepers manage
+orders and their menu from an installable dashboard (`/dashboard`). The platform team registers
+and manages shops from the super admin panel (`/admin`). Shopkeepers can request a shop from the
+homepage (`/`).
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+See [CLAUDE.md](CLAUDE.md) for the product spec and key decisions.
 
-## Features
+## Stack
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Proxy
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+Next.js (App Router, TypeScript) · Tailwind CSS · Supabase (Postgres, Auth, Storage, Realtime) · Vercel
 
-## Demo
+## Setup
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
-
-## Deploy to Vercel
-
-Vercel deployment will guide you through creating a Supabase account and project.
-
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
-
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
-
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
-
-## Clone and run locally
-
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
-
-2. Create a Next.js app using the Supabase Starter template npx command
+1. **Install**
 
    ```bash
-   npx create-next-app --example with-supabase with-supabase-app
+   npm install
    ```
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+2. **Environment** — copy `.env.example` to `.env.local` and fill in:
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+   | Variable | Used for |
+   | --- | --- |
+   | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | browser + server (RLS applies) |
+   | `SUPABASE_SECRET_KEY` | server only — creating owner logins, website shop requests, audit entries |
+   | `NEXT_PUBLIC_PLATFORM_WHATSAPP` | "Message us on WhatsApp" on the homepage (`923001234567` format) |
+   | `RESEND_API_KEY`, `REQUEST_NOTIFY_EMAIL`, `RESEND_FROM` | optional email alert for new shop requests |
+   | `REQUEST_IP_SALT` | any random string; hashes IPs for request rate limiting |
+   | `NEXT_PUBLIC_PHONE_LOGIN_DOMAIN` | only if Supabase rejects the default phone-login domain (see below) |
 
-3. Use `cd` to change into the app's directory
+3. **Database** — in the Supabase SQL editor (or with the Supabase CLI) run
+   [`supabase/migrations/20261011000000_init.sql`](supabase/migrations/20261011000000_init.sql).
+   It creates all tables, helper functions, RLS policies, the audit trigger, the order functions,
+   realtime publication entries and the `product-photos` storage bucket.
 
-   ```bash
-   cd with-supabase-app
-   ```
+4. **Super admin**
+   1. Sign up at `/auth/sign-up` with `irrfankhanktk@gmail.com` and confirm the email.
+   2. Run [`supabase/seed.sql`](supabase/seed.sql). It promotes that account to `super_admin` and adds
+      the Ali Bakers demo shop and starter menu templates. It is safe to re-run.
+   3. Log in, open `/admin/security` and turn on two-step verification (authenticator app — free).
 
-4. Rename `.env.example` to `.env.local` and update the following:
-
-  ```env
-  NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[INSERT SUPABASE PROJECT API PUBLISHABLE OR ANON KEY]
-  ```
-  > [!NOTE]
-  > This example uses `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, which refers to Supabase's new **publishable** key format.
-  > Both legacy **anon** keys and new **publishable** keys can be used with this variable name during the transition period. Supabase's dashboard may show `NEXT_PUBLIC_SUPABASE_ANON_KEY`; its value can be used in this example.
-  > See the [full announcement](https://github.com/orgs/supabase/discussions/29260) for more information.
-
-  Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
-
-5. You can now run the Next.js local development server:
+5. **Run**
 
    ```bash
    npm run dev
    ```
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+   | | |
+   | --- | --- |
+   | Homepage + shop requests | http://localhost:3000 |
+   | Demo shop | http://localhost:3000/ali-bakers |
+   | Super admin | http://localhost:3000/admin |
+   | Shopkeeper dashboard | http://localhost:3000/dashboard |
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+## Roles
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+| Role | How they get access |
+| --- | --- |
+| `super_admin` | `profiles.platform_role = 'super_admin'` (set with SQL only — nobody can promote themselves) |
+| `shop_owner` | row in `shop_members` with role `owner`, created by the register wizard |
+| customer | no account |
 
-## Feedback and issues
+Super admins can open any shop's dashboard with **View as shopkeeper**: they keep their own session,
+a banner shows they are in admin mode, and every change is written to `audit_log` with their user id.
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+## Shop owner logins
 
-## More Supabase examples
+Owners log in with their **mobile number + password**. In wizard step 2 the admin sets a temporary
+password and sends the login details to the owner on WhatsApp; the owner must choose a new password
+on first login. Because Supabase phone sign-in requires a paid SMS provider, each owner's login is an
+internal email derived from the phone number (`923001234567@phone.dukaan.invalid`); no mail is ever
+sent to it. If your Supabase project rejects that address, set `NEXT_PUBLIC_PHONE_LOGIN_DOMAIN` to a
+subdomain you control that receives no mail.
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+Forgotten passwords: the admin resets them from the shop's **Owner & access** tab.
+
+## How ordering works
+
+1. The customer builds a cart in the browser (prices there are for display only).
+2. `placeOrder` (Server Action) validates input and calls the `place_order` database function, which
+   re-reads every price from the database, checks options, availability, minimum order, pickup and
+   delivery area, assigns the next per-shop order number and stores the order with item snapshots.
+3. Only then does the browser open `https://wa.me/<shop number>?text=<order message>`. If the customer
+   never presses Send, the order still shows on the dashboard as **Unconfirmed**.
+4. The dashboard receives new orders through Supabase Realtime and plays an alert sound.
+
+Only shops with status `trial`, `active` or `payment_due` are public and take orders. `setup` shops are
+hidden; `suspended` shops show "This shop is not taking orders right now".
+
+## Project layout
+
+```
+app/                   homepage (/), robots, sitemap, manifest
+app/[slug]/            customer shop, checkout, order-sent page, placeOrder action
+app/dashboard/         shopkeeper dashboard (orders, menu, sales, settings)
+app/admin/             super admin (shops, register wizard, requests, activity, security)
+app/actions/           shared server actions (view-as, shop requests)
+app/auth/              login (phone or email), first-login password change, MFA
+components/ui/         design-system components
+lib/                   types, formatting, hours, WhatsApp message builder, auth/roles, owners, audit
+supabase/migrations/   SQL migrations
+supabase/seed.sql      super admin, demo shop, menu templates
+public/sw.js           service worker for the installable dashboard
+```

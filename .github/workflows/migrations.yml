@@ -1,0 +1,43 @@
+# Applies new SQL files in supabase/migrations/ to the production Supabase project
+# when they land on master. Supabase remembers which migrations ran, so each runs once.
+#
+# Repository secrets needed (GitHub → Settings → Secrets and variables → Actions):
+#   SUPABASE_ACCESS_TOKEN  – https://supabase.com/dashboard/account/tokens
+#   SUPABASE_PROJECT_ID    – the <ref> in https://<ref>.supabase.co
+#   SUPABASE_DB_PASSWORD   – the database password (Project Settings → Database)
+name: Database migrations
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "supabase/migrations/**"
+  workflow_dispatch:
+
+concurrency:
+  group: supabase-migrations
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link project
+        run: supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_ID }}"
+
+      - name: Show pending migrations
+        run: supabase migration list
+
+      - name: Apply migrations
+        run: supabase db push

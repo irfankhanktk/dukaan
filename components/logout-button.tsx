@@ -10,8 +10,10 @@ export function LogoutButton() {
   const logout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
+    // Drop offline copies of dashboard pages (they can contain customer details).
+    navigator.serviceWorker?.controller?.postMessage("dukaan:clear-pages");
     router.push("/auth/login");
   };
 
-  return <Button onClick={logout}>Logout</Button>;
+  return <Button variant="secondary" onClick={logout}>Log out</Button>;
 }
